@@ -3,6 +3,7 @@ package com.mefrreex.displayentities.nukkit.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
@@ -52,7 +53,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
                 .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 1)
                 .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 1);
         if (displayEntity instanceof DisplayBlockEntity) {
-            // TODO make entity invisible if display entity is DisplayBlockEntity
+            metadata.put(new LongEntityData(0, 281474976710688L)); //Magic value - Invisibility flag
         }
 
         addEntityPacket.metadata = metadata;
