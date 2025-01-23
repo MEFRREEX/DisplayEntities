@@ -7,11 +7,12 @@ repositories {
     mavenCentral()
     maven("https://repo.opencollab.dev/maven-snapshots")
     maven("https://repo.opencollab.dev/maven-releases")
+    maven("https://repo.lanink.cn/repository/maven-public")
 }
 
 dependencies {
     api(project(":core"))
-    compileOnlyApi("cn.nukkit:nukkit:1.0-SNAPSHOT")
+    compileOnlyApi("cn.nukkit:Nukkit:MOT-SNAPSHOT")
 }
 
 tasks.build {

@@ -6,9 +6,9 @@ public interface DisplayEntityManager {
 
     void show(DisplayEntity displayEntity, UUID playerId);
 
-    void showToAll();
+    void showToAll(DisplayEntity displayEntity);
 
     void hide(DisplayEntity displayEntity, UUID playerId);
 
-    void hideToAll();
+    void hideToAll(DisplayEntity displayEntity);
 }
