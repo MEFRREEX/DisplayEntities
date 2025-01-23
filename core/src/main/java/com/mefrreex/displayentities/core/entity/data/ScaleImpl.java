@@ -35,13 +35,13 @@ public class ScaleImpl implements Scale {
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         if (this.scale != null) {
-            builder.append("v.scale=").append(this.scale).append(";");
+            builder.append("temp.scale=").append(this.scale).append(";");
         }
         if (this.xzScale != null) {
-            builder.append("v.xzscale=").append(this.xzScale).append(";");
+            builder.append("temp.xzscale=").append(this.xzScale).append(";");
         }
         if (this.yScale != null) {
-            builder.append("v.yscale=").append(this.yScale).append(";");
+            builder.append("temp.yscale=").append(this.yScale).append(";");
         }
         return builder.toString();
     }

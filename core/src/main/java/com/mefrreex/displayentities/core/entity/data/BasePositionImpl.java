@@ -35,13 +35,13 @@ public class BasePositionImpl implements BasePosition {
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         if (this.x != null) {
-            builder.append("v.xbasepos=").append(this.x).append(";");
+            builder.append("temp.xbasepos=").append(this.x).append(";");
         }
         if (this.y != null) {
-            builder.append("v.ybasepos=").append(this.y).append(";");
+            builder.append("temp.ybasepos=").append(this.y).append(";");
         }
         if (this.z != null) {
-            builder.append("v.zbasepos=").append(this.z).append(";");
+            builder.append("temp.zbasepos=").append(this.z).append(";");
         }
         return builder.toString();
     }

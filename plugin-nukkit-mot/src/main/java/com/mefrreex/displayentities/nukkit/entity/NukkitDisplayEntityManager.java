@@ -12,6 +12,7 @@ import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntityManager;
 import com.mefrreex.displayentities.api.entity.DisplayEntityState;
+import com.mefrreex.displayentities.core.entity.DisplayEntityMoLangVariables;
 import com.mefrreex.displayentities.nukkit.NukkitDisplayEntitiesPlugin;
 
 import java.util.HashMap;
@@ -40,13 +41,13 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
         addEntityPacket.entityUniqueId = entityRuntimeId;
         addEntityPacket.entityRuntimeId = entityRuntimeId;
         addEntityPacket.type = this.getLegacyEntityId(displayEntity.getEntityId());
-        addEntityPacket.x = state.getPosition().getX();
-        addEntityPacket.y = state.getPosition().getY();
-        addEntityPacket.z = state.getPosition().getZ();
+        addEntityPacket.x = state.getEntityPosition().getX();
+        addEntityPacket.y = state.getEntityPosition().getY();
+        addEntityPacket.z = state.getEntityPosition().getZ();
 
         EntityMetadata metadata = new EntityMetadata()
-                .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 1)
-                .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 1);
+                .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 0.001f)
+                .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 0.001f);
         if (displayEntity instanceof DisplayBlockEntity) {
             metadata.put(new LongEntityData(0, 281474976710688L)); //Magic value - Invisibility flag
         }
@@ -62,20 +63,20 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
                         .animation("animation.player.sleeping")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("controller.animation.fox.move")
+                        .stopExpression(DisplayEntityMoLangVariables.INIT.get(state))
                         .build(), entityRuntimeId);
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.creeper.swelling")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.xbasepos=v.xbasepos??0;v.ybasepos=v.ybasepos??0;v.zbasepos=v.zbasepos??0;v.xpos=v.xpos??0;v.ypos=v.ypos??0;v.zpos=v.zpos??0;v.xrot=v.xrot??0;v.yrot=v.yrot??0;v.zrot=v.zrot??0;v.scale=v.scale??1;v.xzscale=v.xzscale??1;v.yscale=v.yscale??1;v.swelling_scale1=2.1385*math.sqrt(v.xzscale)*math.sqrt(v.scale);v.swelling_scale2=2.1385*math.sqrt(v.yscale)*math.sqrt(v.scale);")
+                        .stopExpression(DisplayEntityMoLangVariables.SCALE.useState(state))
                         .controller("displayentities:scale")
                         .build(), entityRuntimeId);
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.ender_dragon.neck_head_movement")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.head_rotation_x=0;v.head_rotation_y=0;v.head_rotation_z=0;v.head_position_x=(v.xbasepos*3741/8000)*math.sqrt(v.xzscale)*math.sqrt(v.scale);v.head_position_y=(10.6925+v.ybasepos*3741/8000)*math.sqrt(v.yscale)*math.sqrt(v.scale);v.head_position_z=(17.108-v.zbasepos*3741/8000)*math.sqrt(v.xzscale)*math.sqrt(v.scale);")
+                        .stopExpression(DisplayEntityMoLangVariables.SHIFT_POSITION.useState(state))
                         .controller("displayentities:shift_pos")
                         .build(), entityRuntimeId);
 
@@ -84,14 +85,14 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
                         .animation("animation.warden.move")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.body_x_rot=90+v.xrot;v.body_z_rot=90+v.yrot;")
+                        .stopExpression(DisplayEntityMoLangVariables.ROTATION_X.useState(state))
                         .controller("displayentities:xrot")
                         .build(), entityRuntimeId);
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.player.attack.rotations")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.attack_body_rot_y=-v.zrot;")
+                        .stopExpression(DisplayEntityMoLangVariables.ROTATION_Z.useState(state))
                         .controller("displayentities:zrot")
                         .build(), entityRuntimeId);
 
@@ -100,21 +101,21 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
                         .animation("animation.parrot.moving")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.wing_flap=(16-v.xpos)/0.3;")
+                        .stopExpression(DisplayEntityMoLangVariables.POSITION_X.useState(state))
                         .controller("displayentities:xpos")
                         .build(), entityRuntimeId);
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.minecart.move.v1.0")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.rail_offset.x=0;v.rail_offset.y=1.6485+v.ypos/16;v.rail_offset.z=0;")
+                        .stopExpression(DisplayEntityMoLangVariables.POSITION_Y.useState(state))
                         .controller("displayentities:ypos")
                         .build(), entityRuntimeId);
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.parrot.dance")
                         .nextState("none")
                         .blendOutTime(0)
-                        .stopExpression("v.dance.x=-v.zpos;v.dance.y=0;")
+                        .stopExpression(DisplayEntityMoLangVariables.POSITION_Z.useState(state))
                         .controller("displayentities:zpos")
                         .build(), entityRuntimeId);
             }, 2);

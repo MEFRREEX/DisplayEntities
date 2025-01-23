@@ -1,15 +1,14 @@
 package com.mefrreex.displayentities.api.entity;
 
-import com.mefrreex.displayentities.api.entity.data.BasePosition;
-import com.mefrreex.displayentities.api.entity.data.Position;
-import com.mefrreex.displayentities.api.entity.data.Rotation;
-import com.mefrreex.displayentities.api.entity.data.Scale;
+import com.mefrreex.displayentities.api.entity.data.*;
 
-public interface DisplayEntityState {
+public interface DisplayEntityState extends Serializable {
 
     Position getPosition();
 
     BasePosition getBasePosition();
+
+    EntityPosition getEntityPosition();
 
     Rotation getRotation();
 

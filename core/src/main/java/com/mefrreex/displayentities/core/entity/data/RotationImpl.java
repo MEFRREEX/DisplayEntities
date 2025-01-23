@@ -28,10 +28,10 @@ public class RotationImpl implements Rotation {
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         if (this.x != null) {
-            builder.append("v.xrot=").append(this.x).append(";");
+            builder.append("temp.xrot=").append(this.x).append(";");
         }
         if (this.z != null) {
-            builder.append("v.zrot=").append(this.z).append(";");
+            builder.append("temp.zrot=").append(this.z).append(";");
         }
         return builder.toString();
     }

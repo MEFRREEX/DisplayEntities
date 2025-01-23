@@ -1,16 +1,16 @@
 package com.mefrreex.displayentities.core.entity.data;
 
-import com.mefrreex.displayentities.api.entity.data.Position;
+import com.mefrreex.displayentities.api.entity.data.EntityPosition;
 import lombok.Builder;
 
 @Builder
-public class PositionImpl implements Position {
+public class EntityPositionImpl implements EntityPosition {
 
     private final Float x;
     private final Float y;
     private final Float z;
 
-    public PositionImpl(Float x, Float y, Float z) {
+    public EntityPositionImpl(Float x, Float y, Float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -35,13 +35,13 @@ public class PositionImpl implements Position {
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         if (this.x != null) {
-            builder.append("temp.xpos=").append(this.x).append(";");
+            builder.append("temp.entityxpos=").append(this.x).append(";");
         }
         if (this.y != null) {
-            builder.append("temp.ypos=").append(this.y).append(";");
+            builder.append("temp.entityypos=").append(this.y).append(";");
         }
         if (this.z != null) {
-            builder.append("temp.zpos=").append(this.z).append(";");
+            builder.append("temp.entityzpos=").append(this.z).append(";");
         }
         return builder.toString();
     }
