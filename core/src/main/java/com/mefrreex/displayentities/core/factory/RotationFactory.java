@@ -5,12 +5,12 @@ import com.mefrreex.displayentities.core.entity.data.RotationImpl;
 
 public class RotationFactory {
 
-    public static Rotation of(Float x, Float y, Float z) {
-        return new RotationImpl(x, y, z);
+    public static Rotation of(Float x, Float z) {
+        return new RotationImpl(x, z);
     }
 
     public static Rotation empty() {
-        return new RotationImpl(0f, 0f, 0f);
+        return new RotationImpl(0f, 0f);
     }
 
     public static RotationImpl.RotationImplBuilder builder() {

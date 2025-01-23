@@ -4,7 +4,5 @@ public interface Rotation extends Serializable {
 
     Float getX();
 
-    Float getY();
-
     Float getZ();
 }
