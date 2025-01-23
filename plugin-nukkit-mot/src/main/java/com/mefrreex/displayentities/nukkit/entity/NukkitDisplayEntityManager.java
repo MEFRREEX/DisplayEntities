@@ -7,7 +7,6 @@ import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.AnimateEntityPacket.Animation;
-import cn.nukkit.plugin.InternalPlugin;
 import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntityManager;
@@ -57,7 +56,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
             player.dataPacket(addEntityPacket);
 
             // Sending animations to created entity
-            player.getServer().getScheduler().scheduleDelayedTask(InternalPlugin.INSTANCE, () -> {
+            player.getServer().getScheduler().scheduleDelayedTask(plugin, () -> {
                 // Reposition and define display entity scale
                 this.sendAnimation(player, Animation.builder()
                         .animation("animation.player.sleeping")
