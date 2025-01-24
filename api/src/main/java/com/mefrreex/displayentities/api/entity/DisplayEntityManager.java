@@ -10,5 +10,5 @@ public interface DisplayEntityManager {
 
     void hide(DisplayEntity displayEntity, UUID playerId);
 
-    void hideToAll(DisplayEntity displayEntity);
+    void hideForAll(DisplayEntity displayEntity);
 }

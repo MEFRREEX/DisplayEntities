@@ -52,6 +52,7 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
         if (player != null) {
             entity.spawnTo(player);
 
+            // Sending animations to created entity
             Server.getInstance().getScheduler().scheduleDelayed(plugin, () -> {
                 // Reposition and define display entity scale
                 this.sendAnimation(player, Animation.builder()
@@ -116,6 +117,7 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
                 return true;
             }, 2);
 
+            // Set the entity to the first slot of the item if DisplayEntity is a block
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
                 MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
                 mobEquipmentPacket.setRuntimeEntityId(entityRuntimeId);
@@ -148,7 +150,7 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
     }
 
     @Override
-    public void hideToAll(DisplayEntity displayEntity) {
+    public void hideForAll(DisplayEntity displayEntity) {
         for (EntityPlayer player : Server.getInstance().getOnlinePlayers().values()) {
             this.hide(displayEntity, player.getUUID());
         }

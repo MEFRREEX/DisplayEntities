@@ -35,4 +35,9 @@ public class DisplayEntityImpl implements DisplayEntity {
     public DisplayEntityState getState() {
         return state;
     }
+
+    @Override
+    public void setState(DisplayEntityState state) {
+        this.state = state;
+    }
 }

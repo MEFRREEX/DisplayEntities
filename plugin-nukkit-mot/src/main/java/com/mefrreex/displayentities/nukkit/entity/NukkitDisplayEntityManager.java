@@ -119,6 +119,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
                         .build(), entityRuntimeId);
             }, 2);
 
+            // Set the entity to the first slot of the item if DisplayEntity is a block
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
                 MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
                 mobEquipmentPacket.eid = entityRuntimeId;
@@ -150,7 +151,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
     }
 
     @Override
-    public void hideToAll(DisplayEntity displayEntity) {
+    public void hideForAll(DisplayEntity displayEntity) {
         for (Player player : plugin.getServer().getOnlinePlayers().values()) {
             this.hide(displayEntity, player.getUniqueId());
         }

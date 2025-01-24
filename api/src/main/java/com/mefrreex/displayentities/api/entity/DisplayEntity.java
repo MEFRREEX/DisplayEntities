@@ -9,4 +9,6 @@ public interface DisplayEntity {
     String getEntityId();
 
     DisplayEntityState getState();
+
+    void setState(DisplayEntityState state);
 }
