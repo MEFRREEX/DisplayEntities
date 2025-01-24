@@ -1,0 +1,6 @@
+{
+  "entrance": "com.mefrreex.displayentities.allay.AllayDisplayEntitiesPlugin",
+  "name": "DisplayEntities",
+  "authors": ["MEFRREEX"],
+  "version": "${project.version}"
+}

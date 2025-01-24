@@ -26,5 +26,5 @@ tasks.withType<ProcessResources> {
 }
 
 tasks.withType<Jar> {
-    archiveFileName.set("DisplayEntities-${project.version}.jar")
+    archiveFileName.set("DisplayEntities-Nukkit-MOT-${project.version}.jar")
 }
