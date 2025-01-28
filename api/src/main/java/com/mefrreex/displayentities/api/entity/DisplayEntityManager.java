@@ -8,6 +8,10 @@ public interface DisplayEntityManager {
 
     void showToAll(DisplayEntity displayEntity);
 
+    void update(DisplayEntity displayEntity, DisplayEntityState displayEntityState, UUID playerId);
+
+    void updateForAll(DisplayEntity displayEntity, DisplayEntityState displayEntityState);
+
     void hide(DisplayEntity displayEntity, UUID playerId);
 
     void hideForAll(DisplayEntity displayEntity);

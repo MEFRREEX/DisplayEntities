@@ -14,9 +14,11 @@ import org.allaymc.api.entity.type.EntityTypes;
 import org.allaymc.api.registry.Registries;
 import org.allaymc.api.server.Server;
 import org.allaymc.api.utils.Identifier;
+import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
 import org.cloudburstmc.protocol.bedrock.packet.AnimateEntityPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
+import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.cloudburstmc.protocol.bedrock.packet.RemoveEntityPacket;
 
 import java.util.HashMap;
@@ -53,69 +55,7 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
             entity.spawnTo(player);
 
             // Sending animations to created entity
-            Server.getInstance().getScheduler().scheduleDelayed(plugin, () -> {
-                // Reposition and define display entity scale
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.player.sleeping")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.INIT.get(state))
-                        .build(), entityRuntimeId);
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.creeper.swelling")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.SCALE.useState(state))
-                        .controller("displayentities:scale")
-                        .build(), entityRuntimeId);
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.ender_dragon.neck_head_movement")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.SHIFT_POSITION.useState(state))
-                        .controller("displayentities:shift_pos")
-                        .build(), entityRuntimeId);
-
-                // Define display entity rotation
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.warden.move")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.ROTATION_X.useState(state))
-                        .controller("displayentities:xrot")
-                        .build(), entityRuntimeId);
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.player.attack.rotations")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.ROTATION_Z.useState(state))
-                        .controller("displayentities:zrot")
-                        .build(), entityRuntimeId);
-
-                // Define display entity position
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.parrot.moving")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.POSITION_X.useState(state))
-                        .controller("displayentities:xpos")
-                        .build(), entityRuntimeId);
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.minecart.move.v1.0")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.POSITION_Y.useState(state))
-                        .controller("displayentities:ypos")
-                        .build(), entityRuntimeId);
-                this.sendAnimation(player, Animation.builder()
-                        .animation("animation.parrot.dance")
-                        .nextState("none")
-                        .blendOutTime(0)
-                        .stopExpression(DisplayEntityMoLangVariables.POSITION_Z.useState(state))
-                        .controller("displayentities:zpos")
-                        .build(), entityRuntimeId);
-                return true;
-            }, 2);
+            this.sendAnimations(player, state, entityRuntimeId);
 
             // Set the entity to the first slot of the item if DisplayEntity is a block
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
@@ -132,6 +72,43 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
     public void showToAll(DisplayEntity displayEntity) {
         for (EntityPlayer player : Server.getInstance().getOnlinePlayers().values()) {
             this.show(displayEntity, player.getUUID());
+        }
+    }
+
+    @Override
+    public void update(DisplayEntity displayEntity, DisplayEntityState newState, UUID playerId) {
+        Long entityRuntimeId = uniqueToEntityIdMap.get(displayEntity.getUniqueId());
+        if (entityRuntimeId == null) {
+            return;
+        }
+
+        DisplayEntityState oldState = displayEntity.getState();
+        displayEntity.setState(newState);
+
+        EntityPlayer player = Server.getInstance().getOnlinePlayers().get(playerId);
+        if (player != null) {
+            if (newState.getEntityPosition() != null && !oldState.getEntityPosition().equals(newState.getEntityPosition())) {
+                MoveEntityAbsolutePacket packet = new MoveEntityAbsolutePacket();
+                packet.setRuntimeEntityId(entityRuntimeId);
+                packet.setForceMove(true);
+                packet.setOnGround(true);
+                packet.setTeleported(true);
+                packet.setPosition(Vector3f.from(
+                    newState.getEntityPosition().getX(),
+                    newState.getEntityPosition().getY(),
+                    newState.getEntityPosition().getZ()
+                ));
+                player.sendPacket(packet);
+            }
+
+            this.sendAnimations(player, newState, entityRuntimeId);
+        }
+    }
+
+    @Override
+    public void updateForAll(DisplayEntity displayEntity, DisplayEntityState newState) {
+        for (EntityPlayer player : Server.getInstance().getOnlinePlayers().values()) {
+            this.update(displayEntity, newState, player.getUUID());
         }
     }
 
@@ -166,5 +143,71 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
         packet.setController(animation.getController());
         packet.getRuntimeEntityIds().add(entityRuntimeId);
         player.sendPacket(packet);
+    }
+
+    public void sendAnimations(EntityPlayer player, DisplayEntityState state, long entityRuntimeId) {
+        Server.getInstance().getScheduler().scheduleDelayed(plugin, () -> {
+            // Reposition and define display entity scale
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.player.sleeping")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.INIT.get(state))
+                    .build(), entityRuntimeId);
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.creeper.swelling")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.SCALE.useState(state))
+                    .controller("displayentities:scale")
+                    .build(), entityRuntimeId);
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.ender_dragon.neck_head_movement")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.SHIFT_POSITION.useState(state))
+                    .controller("displayentities:shift_pos")
+                    .build(), entityRuntimeId);
+
+            // Define display entity rotation
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.warden.move")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.ROTATION_X.useState(state))
+                    .controller("displayentities:xrot")
+                    .build(), entityRuntimeId);
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.player.attack.rotations")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.ROTATION_Z.useState(state))
+                    .controller("displayentities:zrot")
+                    .build(), entityRuntimeId);
+
+            // Define display entity position
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.parrot.moving")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.POSITION_X.useState(state))
+                    .controller("displayentities:xpos")
+                    .build(), entityRuntimeId);
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.minecart.move.v1.0")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.POSITION_Y.useState(state))
+                    .controller("displayentities:ypos")
+                    .build(), entityRuntimeId);
+            this.sendAnimation(player, Animation.builder()
+                    .animation("animation.parrot.dance")
+                    .nextState("none")
+                    .blendOutTime(0)
+                    .stopExpression(DisplayEntityMoLangVariables.POSITION_Z.useState(state))
+                    .controller("displayentities:zpos")
+                    .build(), entityRuntimeId);
+            return true;
+        }, 2);
     }
 }

@@ -2,8 +2,10 @@ package com.mefrreex.displayentities.core.entity.data;
 
 import com.mefrreex.displayentities.api.entity.data.EntityPosition;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 @Builder
+@EqualsAndHashCode
 public class EntityPositionImpl implements EntityPosition {
 
     private final Float x;

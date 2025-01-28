@@ -2,8 +2,10 @@ package com.mefrreex.displayentities.core.entity.data;
 
 import com.mefrreex.displayentities.api.entity.data.Rotation;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 @Builder
+@EqualsAndHashCode
 public class RotationImpl implements Rotation {
 
     private final Float x;
