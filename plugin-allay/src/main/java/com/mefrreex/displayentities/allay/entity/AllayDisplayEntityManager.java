@@ -2,15 +2,12 @@ package com.mefrreex.displayentities.allay.entity;
 
 import com.mefrreex.displayentities.allay.AllayDisplayEntitiesPlugin;
 import com.mefrreex.displayentities.allay.utils.Animation;
-import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
-import com.mefrreex.displayentities.api.entity.DisplayEntity;
-import com.mefrreex.displayentities.api.entity.DisplayEntityManager;
-import com.mefrreex.displayentities.api.entity.DisplayEntityState;
-import com.mefrreex.displayentities.api.entity.DisplayEntityMoLangVariables;
+import com.mefrreex.displayentities.api.entity.*;
 import org.allaymc.api.entity.Entity;
 import org.allaymc.api.entity.initinfo.EntityInitInfo;
 import org.allaymc.api.entity.interfaces.EntityPlayer;
 import org.allaymc.api.entity.type.EntityTypes;
+import org.allaymc.api.item.ItemStack;
 import org.allaymc.api.registry.Registries;
 import org.allaymc.api.server.Server;
 import org.allaymc.api.utils.Identifier;
@@ -59,10 +56,17 @@ public class AllayDisplayEntityManager implements DisplayEntityManager {
 
             // Set the entity to the first slot of the item if DisplayEntity is a block
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
+                DisplayBlock displayBlock = blockEntity.getBlock();
+
+                ItemStack itemStack = Registries.ITEMS.get(new Identifier(displayBlock.id())).createItemStack();
+                if (displayBlock.meta() != null) {
+                    itemStack.setMeta(displayBlock.meta());
+                }
+
                 MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
                 mobEquipmentPacket.setRuntimeEntityId(entityRuntimeId);
                 mobEquipmentPacket.setHotbarSlot(0);
-                mobEquipmentPacket.setItem(Registries.ITEMS.get(new Identifier(blockEntity.getBlockId())).createItemStack().toNetworkItemData());
+                mobEquipmentPacket.setItem(itemStack.toNetworkItemData());
                 player.sendPacket(mobEquipmentPacket);
             }
         }

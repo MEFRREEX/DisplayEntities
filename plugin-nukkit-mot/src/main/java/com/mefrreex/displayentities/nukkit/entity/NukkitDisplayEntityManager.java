@@ -7,11 +7,7 @@ import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.AnimateEntityPacket.Animation;
-import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
-import com.mefrreex.displayentities.api.entity.DisplayEntity;
-import com.mefrreex.displayentities.api.entity.DisplayEntityManager;
-import com.mefrreex.displayentities.api.entity.DisplayEntityState;
-import com.mefrreex.displayentities.api.entity.DisplayEntityMoLangVariables;
+import com.mefrreex.displayentities.api.entity.*;
 import com.mefrreex.displayentities.nukkit.NukkitDisplayEntitiesPlugin;
 
 import java.util.HashMap;
@@ -60,10 +56,17 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
 
             // Set the entity to the first slot of the item if DisplayEntity is a block
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
+                DisplayBlock displayBlock = blockEntity.getBlock();
+
+                Item item = Item.fromString(displayBlock.id());
+                if (displayBlock.meta() != null) {
+                    item.setDamage(displayBlock.meta());
+                }
+
                 MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
                 mobEquipmentPacket.eid = entityRuntimeId;
                 mobEquipmentPacket.hotbarSlot = 0;
-                mobEquipmentPacket.item = Item.fromString(blockEntity.getBlockId());
+                mobEquipmentPacket.item = item;
                 player.dataPacket(mobEquipmentPacket);
             }
         });
