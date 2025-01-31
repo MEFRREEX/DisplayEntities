@@ -6,7 +6,7 @@ import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntityManager;
 import com.mefrreex.displayentities.api.entity.DisplayEntityState;
-import com.mefrreex.displayentities.core.entity.DisplayEntityMoLangVariables;
+import com.mefrreex.displayentities.api.entity.DisplayEntityMoLangVariables;
 import org.allaymc.api.entity.Entity;
 import org.allaymc.api.entity.initinfo.EntityInitInfo;
 import org.allaymc.api.entity.interfaces.EntityPlayer;
