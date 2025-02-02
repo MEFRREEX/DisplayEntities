@@ -1,0 +1,5 @@
+name: "DisplayEntities"
+version: "${project.version}"
+authors: ["MEFRREEX"]
+api: ["2.0.0"]
+main: "com.mefrreex.displayentities.pnx.PNXDisplayEntitiesPlugin"

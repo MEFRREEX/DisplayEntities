@@ -1,26 +1,29 @@
-package com.mefrreex.displayentities.nukkit.entity;
+package com.mefrreex.displayentities.pnx.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.EntityMetadata;
-import cn.nukkit.entity.data.LongEntityData;
+import cn.nukkit.entity.data.EntityDataMap;
+import cn.nukkit.entity.data.EntityDataTypes;
+import cn.nukkit.entity.data.EntityFlag;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.AnimateEntityPacket.Animation;
+import cn.nukkit.registry.Registries;
 import com.mefrreex.displayentities.api.entity.*;
-import com.mefrreex.displayentities.nukkit.NukkitDisplayEntitiesPlugin;
+import com.mefrreex.displayentities.pnx.PNXDisplayEntitiesPlugin;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class NukkitDisplayEntityManager implements DisplayEntityManager {
+public class PNXDisplayEntityManager implements DisplayEntityManager {
 
-    private final NukkitDisplayEntitiesPlugin plugin;
+    private final PNXDisplayEntitiesPlugin plugin;
 
     private final Map<UUID, Long> uniqueToEntityIdMap = new HashMap<>();
 
-    public NukkitDisplayEntityManager(NukkitDisplayEntitiesPlugin plugin) {
+    public PNXDisplayEntityManager(PNXDisplayEntitiesPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -29,7 +32,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
         DisplayEntityState state = displayEntity.getState();
 
         // Create new entity id and save it to map
-        long entityRuntimeId = Entity.entityCount++;
+        long entityRuntimeId = Entity.entityCount.incrementAndGet();
         uniqueToEntityIdMap.put(displayEntity.getUniqueId(), entityRuntimeId);
 
         AddEntityPacket addEntityPacket = new AddEntityPacket();
@@ -40,13 +43,13 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
         addEntityPacket.y = state.getEntityPosition().getY();
         addEntityPacket.z = state.getEntityPosition().getZ();
 
-        EntityMetadata metadata = new EntityMetadata()
-                .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 0.001f)
-                .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 0.001f);
+        EntityDataMap metadata = new EntityDataMap();
+        metadata.put(EntityDataTypes.HEIGHT, 0.001f);
+        metadata.put(EntityDataTypes.WIDTH, 0.001f);
         if (displayEntity instanceof DisplayBlockEntity) {
-            metadata.put(new LongEntityData(0, 281474976710688L)); //Magic value - Invisibility flag
+            metadata.putFlags(EnumSet.of(EntityFlag.INVISIBLE));
         }
-        addEntityPacket.metadata = metadata;
+        addEntityPacket.entityData = metadata;
 
         plugin.getServer().getPlayer(playerId).ifPresent(player -> {
             player.dataPacket(addEntityPacket);
@@ -58,7 +61,7 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
             if (displayEntity instanceof DisplayBlockEntity blockEntity) {
                 DisplayBlock displayBlock = blockEntity.getBlock();
 
-                Item item = Item.fromString(displayBlock.id());
+                Item item = Item.get(displayBlock.id());
                 if (displayBlock.meta() != null) {
                     item.setDamage(displayBlock.meta());
                 }
@@ -134,21 +137,13 @@ public class NukkitDisplayEntityManager implements DisplayEntityManager {
     }
 
     private int getLegacyEntityId(String entityId) {
-        Map<Integer, String> mapping = new HashMap<>();
-        AddEntityPacket.setupLegacyIdentifiers(mapping, ProtocolInfo.CURRENT_PROTOCOL);
-
-        for (Map.Entry<Integer, String> entry : mapping.entrySet()) {
-            if (entry.getValue().equals(entityId)) {
-                return entry.getKey();
-            }
-        }
-        return 0;
+        return Registries.ENTITY.getEntityNetworkId(entityId);
     }
 
     private void sendAnimation(Player player, Animation animation, long entityRuntimeId) {
         AnimateEntityPacket packet = new AnimateEntityPacket();
         packet.parseFromAnimation(animation);
-        packet.getEntityRuntimeIds().add(entityRuntimeId);
+        packet.entityRuntimeIds.add(entityRuntimeId);
         player.dataPacket(packet);
     }
 

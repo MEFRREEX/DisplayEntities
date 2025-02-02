@@ -2,5 +2,7 @@ package com.mefrreex.displayentities.api.entity;
 
 public interface DisplayBlockEntity extends DisplayEntity {
 
-    String getBlockId();
+    String BLOCK_ENTITY_ID = "minecraft:fox";
+
+    DisplayBlock getBlock();
 }

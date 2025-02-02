@@ -1,5 +1,6 @@
 package com.mefrreex.displayentities.core.entity;
 
+import com.mefrreex.displayentities.api.entity.DisplayBlock;
 import com.mefrreex.displayentities.api.entity.DisplayBlockEntity;
 import com.mefrreex.displayentities.api.entity.DisplayEntityState;
 
@@ -7,19 +8,19 @@ import java.util.UUID;
 
 public class DisplayBlockEntityImpl extends DisplayEntityImpl implements DisplayBlockEntity {
 
-    private final String blockId;
+    private final DisplayBlock block;
 
-    public DisplayBlockEntityImpl(String blockId, DisplayEntityState state) {
-        this(UUID.randomUUID(), blockId, state);
+    public DisplayBlockEntityImpl(DisplayBlock block, DisplayEntityState state) {
+        this(UUID.randomUUID(), block, state);
     }
 
-    public DisplayBlockEntityImpl(UUID uniqueId, String blockId, DisplayEntityState state) {
-        super(uniqueId, "minecraft:fox", state);
-        this.blockId = blockId;
+    public DisplayBlockEntityImpl(UUID uniqueId, DisplayBlock block, DisplayEntityState state) {
+        super(uniqueId, BLOCK_ENTITY_ID, state);
+        this.block = block;
     }
 
     @Override
-    public String getBlockId() {
-        return blockId;
+    public DisplayBlock getBlock() {
+        return block;
     }
 }

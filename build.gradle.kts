@@ -12,7 +12,7 @@ java {
 
 allprojects {
     group = "com.mefrreex.displayentities"
-    version = "1.0.6-SNAPSHOT"
+    version = "1.0.8-SNAPSHOT"
 }
 
 subprojects {
